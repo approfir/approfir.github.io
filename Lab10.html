@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -38,7 +38,7 @@ html,
             center: [-96.75, 43.55] // longitude, latitude
         });
 
-        var template = {
+        var schoolPopup = {
             title: "Sioux Falls Schools",
             content: [{
                 type: "fields",
@@ -50,13 +50,21 @@ html,
                     fieldName: "ADDRESS",
                     label: "Address",
                     visible: true
+                }, {
+                    fieldName: "DISTRICTNAME",
+                    label: "School District",
+                    visible: true
+                },{
+                    fieldName: "SCHOOLTYPE",
+                    label: "Type",
+                    visible: true
                 }]
             }]
         };
 
         var schools = new FeatureLayer ({
             url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/9/query?outFields=*&where=1%3D1",
-            popupTemplate: template
+            popupTemplate: schoolPopup
         });
 
         var elemDistricts = new FeatureLayer({
