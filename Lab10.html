@@ -23,9 +23,10 @@ html,
         "esri/Map",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
+        "esri/widgets/LayerList",
         "dojo/domReady!"
 
-    ], function(Map, MapView, FeatureLayer) {
+    ], function(Map, MapView, FeatureLayer, LayerList) {
 
         var map = new Map({
             basemap: "streets",
@@ -120,7 +121,14 @@ html,
         map.add(elemDistricts);
         map.add(elemZones);
         map.add(schools);
-    });
+
+        var layerList = new LayerList({
+                view: view
+            });
+            view.ui.add(layerList, {
+                position: "top-right"
+            });
+        });
 </script>
 </head>
 
