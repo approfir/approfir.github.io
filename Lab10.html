@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Lab 10 - Aileen Profir</title>
+<style>
+html,
+    body,
+    #viewDiv {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+</style>
+
+<link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.10/"></script>
+
+    <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "dojo/domReady!"
+
+    ], function(Map, MapView, FeatureLayer) {
+
+        var map = new Map({
+            basemap: "streets",
+        });
+
+        var view = new MapView({
+            container: "viewDiv",
+            map: map,
+            zoom: 12,
+            center: [-96.75, 43.55] // longitude, latitude
+        });
+
+        var template = {
+            title: "Sioux Falls Schools",
+            content: [{
+                type: "fields",
+                fieldInfos:[{
+                    fieldName: "SCHOOLNAME",
+                    label: "School Name",
+                    visible: true
+                    }, {
+                    fieldName: "ADDRESS",
+                    label: "Address",
+                    visible: true
+                }]
+            }]
+        };
+
+        var schools = new FeatureLayer ({
+            url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/9/query?outFields=*&where=1%3D1",
+            popupTemplate: template
+        });
+
+        var elemDistricts = new FeatureLayer({
+               url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/5/query?outFields=*&where=1%3D1"
+        });
+
+        var elemZones = new FeatureLayer ({
+            url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/2/query?outFields=*&where=1%3D1",
+        });
+
+        map.add(elemDistricts);
+        map.add(elemZones);
+        map.add(schools);
+    });
+</script>
+</head>
+
+<body>
+<div id="viewDiv"></div>
+    </body>
+    </html>
