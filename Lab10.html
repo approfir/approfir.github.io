@@ -51,7 +51,7 @@ html,
                     label: "Address",
                     visible: true
                 }, {
-                    fieldName: "DISTRICTNAME",
+                    fieldName: "DISTRCTNAME",
                     label: "School District",
                     visible: true
                 },{
@@ -62,17 +62,59 @@ html,
             }]
         };
 
+        var elemDstrctPopup = {
+            title: "Elementary School Districts",
+            content: [{
+                type: "fields",
+                fieldInfos:[{
+                    fieldName: "DISTRCTNAME",
+                    label: "School District",
+                    visible: true
+                },{
+                    fieldName: "SCHOOLAREA",
+                    label: "Area",
+                    visible: true,
+                    format: {
+                        digitSeparator: true,
+                        places: 2
+                    }
+                }]
+            }]
+        };
+
+        var elemZonesPopup = {
+            title: "Elementary School Bus Zones",
+            content: [{
+                type: "fields",
+                fieldInfos:[{
+                    fieldName: "DISTRCTNAME",
+                    label: "School District",
+                    visible: true
+                },{
+                    fieldName: "SCHOOLAREA",
+                    label: "Area",
+                    visible: true,
+                    format: {
+                        digitSeparator: true,
+                        places: 2
+                    }
+                }]
+            }]
+        };
+
         var schools = new FeatureLayer ({
             url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/9/query?outFields=*&where=1%3D1",
             popupTemplate: schoolPopup
         });
 
         var elemDistricts = new FeatureLayer({
-               url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/5/query?outFields=*&where=1%3D1"
+            url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/5/query?outFields=*&where=1%3D1",
+            popupTemplate: elemDstrctPopup
         });
 
         var elemZones = new FeatureLayer ({
             url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/2/query?outFields=*&where=1%3D1",
+            popupTemplate: elemZonesPopup
         });
 
         map.add(elemDistricts);
