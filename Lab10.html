@@ -112,13 +112,13 @@ html,
         var elemDistricts = new FeatureLayer({
             url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/5/query?outFields=*&where=1%3D1",
             popupTemplate: elemDstrctPopup,
-            id: "Sioux Falls Elementary School Districts"
+            id: "Elementary School Districts"
         });
 
         var elemZones = new FeatureLayer ({
             url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/2/query?outFields=*&where=1%3D1",
             popupTemplate: elemZonesPopup,
-            id: "Sioux Falls Elementary School Bus Zones"
+            id: "Elementary School Bus Zones"
         });
 
         map.add(elemDistricts);
