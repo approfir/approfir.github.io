@@ -107,31 +107,27 @@ html,
         var schoolsRenderer = {
             type: "unique-value",
             field: "SCHOOLTYPE",
-            defaultSymbol: {type: "simple-fill"}
+            defaultSymbol: {type: "simple-fill"},
+            uniqueValueInfos: [{
+                value: "Elementary",
+                symbol: {
+                    type: "simple-fill",
+                    color: "blue"
+                }
+            }, {
+                value: "Middle",
+                symbol: {
+                    type: "simple-fill",
+                    color: "red"
+                }
+            }, {
+                value: "High",
+                symbol: {
+                    type: "simple-fill",
+                    color: "green"
+                }
+            }]
         };
-        renderer.addUniqueValueInfo({
-           value: "Elementary",
-           symbol: {
-               type: "simple-fill",
-               color: "blue"
-           }
-        });
-
-        renderer.addUniqueValueInfo ({
-            value: "Middle",
-            symbol: {
-                type: "simple-fill",
-                color: "red"
-            }
-        });
-
-        renderer.addUniqueValueInfo ({
-            value: "High",
-            symbol: {
-                type: "simple-fill",
-                color: "green"
-            }
-        });
 
         var schools = new FeatureLayer ({
             url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/9/query?outFields=*&where=1%3D1",
@@ -139,8 +135,6 @@ html,
             popupTemplate: schoolPopup,
             id: "Schools"
         });
-
-        map.add(schools);
 
         var elemDistricts = new FeatureLayer({
             url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/5/query?outFields=*&where=1%3D1",
@@ -156,7 +150,7 @@ html,
 
         map.add(elemDistricts);
         map.add(elemZones);
-
+        map.add(schools);
 
         var layerList = new LayerList({
                 view: view
