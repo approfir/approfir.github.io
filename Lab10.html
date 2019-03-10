@@ -12,7 +12,7 @@ html,
     margin: 0;
     height: 100%;
     width: 100%;
-}
+    }
 </style>
 
 <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
@@ -23,10 +23,11 @@ html,
         "esri/Map",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
+        "esri/widgets/Legend",
         "esri/widgets/LayerList",
         "dojo/domReady!"
 
-    ], function(Map, MapView, FeatureLayer, LayerList) {
+    ], function(Map, MapView, FeatureLayer, Legend, LayerList) {
 
         var map = new Map({
             basemap: "streets",
@@ -157,6 +158,15 @@ html,
         map.add(elemZones);
         map.add(schools);
 
+        var legend = new Legend ({
+            view: view,
+            layerInfos: [{
+                layer: schools,
+                title: "Sioux Falls Schools"
+            }]
+        });
+        view.ui.add(legend, "bottom-left");
+
         var layerList = new LayerList({
                 view: view
              });
@@ -169,5 +179,5 @@ html,
 
 <body>
 <div id="viewDiv"></div>
-    </body>
-    </html>
+</body>
+</html>
