@@ -23,11 +23,10 @@ html,
         "esri/Map",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
-        "esri/renderers/UniqueValueRenderer",
         "esri/widgets/LayerList",
         "dojo/domReady!"
 
-    ], function(Map, MapView, FeatureLayer, UniqueValueRenderer, LayerList) {
+    ], function(Map, MapView, FeatureLayer, LayerList) {
 
         var map = new Map({
             basemap: "streets",
@@ -107,24 +106,30 @@ html,
         var schoolsRenderer = {
             type: "unique-value",
             field: "SCHOOLTYPE",
-            defaultSymbol: {type: "simple-fill"},
+            defaultSymbol: {type: "simple-marker", color: "black", style: "square", size: "10px"},
             uniqueValueInfos: [{
                 value: "Elementary",
                 symbol: {
-                    type: "simple-fill",
-                    color: "blue"
+                    type: "simple-marker",
+                    color: "blue",
+                    style: "square",
+                    size: "10px"
                 }
             }, {
                 value: "Middle",
                 symbol: {
-                    type: "simple-fill",
-                    color: "red"
+                    type: "simple-marker",
+                    color: "red",
+                    style: "square",
+                    size: "10px"
                 }
             }, {
                 value: "High",
                 symbol: {
-                    type: "simple-fill",
-                    color: "green"
+                    type: "simple-marker",
+                    color: "green",
+                    style: "square",
+                    size: "10px"
                 }
             }]
         };
