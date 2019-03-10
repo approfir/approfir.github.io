@@ -23,10 +23,11 @@ html,
         "esri/Map",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
+        "esri/renderers/UniqueValueRenderer",
         "esri/widgets/LayerList",
         "dojo/domReady!"
 
-    ], function(Map, MapView, FeatureLayer, LayerList) {
+    ], function(Map, MapView, FeatureLayer, UniqueValueRenderer, LayerList) {
 
         var map = new Map({
             basemap: "streets",
@@ -103,11 +104,43 @@ html,
             }]
         };
 
+        var schoolsRenderer = {
+            type: "unique-value",
+            field: "SCHOOLTYPE",
+            defaultSymbol: {type: "simple-fill"}
+        };
+        renderer.addUniqueValueInfo({
+           value: "Elementary",
+           symbol: {
+               type: "simple-fill",
+               color: "blue"
+           }
+        });
+
+        renderer.addUniqueValueInfo ({
+            value: "Middle",
+            symbol: {
+                type: "simple-fill",
+                color: "red"
+            }
+        });
+
+        renderer.addUniqueValueInfo ({
+            value: "High",
+            symbol: {
+                type: "simple-fill",
+                color: "green"
+            }
+        });
+
         var schools = new FeatureLayer ({
             url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/9/query?outFields=*&where=1%3D1",
+            renderer: schoolsRenderer,
             popupTemplate: schoolPopup,
             id: "Schools"
         });
+
+        map.add(schools);
 
         var elemDistricts = new FeatureLayer({
             url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/5/query?outFields=*&where=1%3D1",
@@ -123,11 +156,11 @@ html,
 
         map.add(elemDistricts);
         map.add(elemZones);
-        map.add(schools);
+
 
         var layerList = new LayerList({
                 view: view
-            });
+             });
             view.ui.add(layerList, {
                 position: "top-right"
             });
