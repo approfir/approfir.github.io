@@ -1,183 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>Lab 10 - Aileen Profir</title>
-<style>
-html,
-    body,
-    #viewDiv {
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    }
-</style>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+        #queryDiv {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            max-width: 300px;
+            background-color: steelblue;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
 
-<link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
     <script src="https://js.arcgis.com/4.10/"></script>
 
     <script>
-    require([
-        "esri/Map",
-        "esri/views/MapView",
-        "esri/layers/FeatureLayer",
-        "esri/widgets/Legend",
-        "esri/widgets/LayerList",
-        "dojo/domReady!"
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/tasks/support/Query",
+            "esri/tasks/QueryTask",
+            "esri/layers/GraphicsLayer",
+            "esri/symbols/SimpleMarkerSymbol",
+            "esri/layers/FeatureLayer",
+            "esri/widgets/Legend",
+            "esri/widgets/LayerList",
+            "dojo/dom",
+            "dojo/on",
+            "dojo/_base/array",
+            "dojo/domReady!"
 
-    ], function(Map, MapView, FeatureLayer, Legend, LayerList) {
+        ], function(Map, MapView, Query, QueryTask, GraphicsLayer, SimpleMarkerSymbol, FeatureLayer, Legend, LayerList, dom, on, arrayUtils) {
 
-        var map = new Map({
-            basemap: "streets",
-        });
+            var viewSchools;
+            var queryResults = new GraphicsLayer({title: "Search Results"});
 
-        var view = new MapView({
-            container: "viewDiv",
-            map: map,
-            zoom: 12,
-            center: [-96.75, 43.55] // longitude, latitude
-        });
+            on(dom.byId("queryBtn"),"click", doQuery);
 
-        var schoolPopup = {
-            title: "Sioux Falls Schools",
-            content: [{
-                type: "fields",
-                fieldInfos:[{
-                    fieldName: "SCHOOLNAME",
-                    label: "School Name",
-                    visible: true
-                    }, {
-                    fieldName: "ADDRESS",
-                    label: "Address",
-                    visible: true
-                }, {
-                    fieldName: "DISTRCTNAME",
-                    label: "School District",
-                    visible: true
-                },{
-                    fieldName: "SCHOOLTYPE",
-                    label: "Type",
-                    visible: true
-                }]
-            }]
-        };
-
-        var elemDstrctPopup = {
-            title: "Elementary School Districts",
-            content: [{
-                type: "fields",
-                fieldInfos:[{
-                    fieldName: "DISTRCTNAME",
-                    label: "School District",
-                    visible: true
-                },{
-                    fieldName: "SCHOOLAREA",
-                    label: "Area",
-                    visible: true,
-                    format: {
-                        digitSeparator: true,
-                        places: 2
-                    }
-                }]
-            }]
-        };
-
-        var elemZonesPopup = {
-            title: "Elementary School Bus Zones",
-            content: [{
-                type: "fields",
-                fieldInfos:[{
-                    fieldName: "DISTRCTNAME",
-                    label: "School District",
-                    visible: true
-                },{
-                    fieldName: "SCHOOLAREA",
-                    label: "Area",
-                    visible: true,
-                    format: {
-                        digitSeparator: true,
-                        places: 2
-                    }
-                }]
-            }]
-        };
-
-        var schoolsRenderer = {
-            type: "unique-value",
-            field: "SCHOOLTYPE",
-            defaultSymbol: {type: "simple-marker", color: "black", style: "square", size: "10px"},
-            uniqueValueInfos: [{
-                value: "Elementary",
-                symbol: {
-                    type: "simple-marker",
-                    color: "blue",
-                    style: "square",
-                    size: "10px"
-                }
-            }, {
-                value: "Middle",
-                symbol: {
-                    type: "simple-marker",
-                    color: "red",
-                    style: "square",
-                    size: "10px"
-                }
-            }, {
-                value: "High",
-                symbol: {
-                    type: "simple-marker",
-                    color: "green",
-                    style: "square",
-                    size: "10px"
-                }
-            }]
-        };
-
-        var schools = new FeatureLayer ({
-            url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/9/query?outFields=*&where=1%3D1",
-            renderer: schoolsRenderer,
-            popupTemplate: schoolPopup,
-            id: "Schools"
-        });
-
-        var elemDistricts = new FeatureLayer({
-            url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/5/query?outFields=*&where=1%3D1",
-            popupTemplate: elemDstrctPopup,
-            id: "Elementary School Districts"
-        });
-
-        var elemZones = new FeatureLayer ({
-            url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/2/query?outFields=*&where=1%3D1",
-            popupTemplate: elemZonesPopup,
-            id: "Elementary School Bus Zones"
-        });
-
-        map.add(elemDistricts);
-        map.add(elemZones);
-        map.add(schools);
-
-        var legend = new Legend ({
-            view: view,
-            layerInfos: [{
-                layer: schools,
-                title: "Sioux Falls Schools"
-            }]
-        });
-        view.ui.add(legend, "bottom-left");
-
-        var layerList = new LayerList({
-                view: view
-             });
-            view.ui.add(layerList, {
-                position: "top-right"
+            var map = new Map({
+                basemap: "streets"
             });
+
+            viewSchools = new MapView({
+                container: "viewDiv",
+                map: map,
+                zoom: 12,
+                center: [-96.75, 43.55] // longitude, latitude
+            });
+
+            var schoolPopup = {
+                title: "Sioux Falls Schools",
+                content: [{
+                    type: "fields",
+                    fieldInfos:[{
+                        fieldName: "SCHOOLNAME",
+                        label: "School Name",
+                        visible: true
+                    }, {
+                        fieldName: "ADDRESS",
+                        label: "Address",
+                        visible: true
+                    }, {
+                        fieldName: "DISTRCTNAME",
+                        label: "School District",
+                        visible: true
+                    },{
+                        fieldName: "SCHOOLTYPE",
+                        label: "Type",
+                        visible: true
+                    }]
+                }]
+            };
+
+            var elemDstrctPopup = {
+                title: "Elementary School Districts",
+                content: [{
+                    type: "fields",
+                    fieldInfos:[{
+                        fieldName: "DISTRCTNAME",
+                        label: "School District",
+                        visible: true
+                    },{
+                        fieldName: "SCHOOLAREA",
+                        label: "Area",
+                        visible: true,
+                        format: {
+                            digitSeparator: true,
+                            places: 2
+                        }
+                    }]
+                }]
+            };
+
+            var elemZonesPopup = {
+                title: "Elementary School Bus Zones",
+                content: [{
+                    type: "fields",
+                    fieldInfos:[{
+                        fieldName: "DISTRCTNAME",
+                        label: "School District",
+                        visible: true
+                    },{
+                        fieldName: "SCHOOLAREA",
+                        label: "Area",
+                        visible: true,
+                        format: {
+                            digitSeparator: true,
+                            places: 2
+                        }
+                    }]
+                }]
+            };
+
+            var schoolsRenderer = {
+                type: "unique-value",
+                field: "SCHOOLTYPE",
+                defaultSymbol: {type: "simple-marker", color: "black", style: "square", size: "10px"},
+                uniqueValueInfos: [{
+                    value: "Elementary",
+                    symbol: {
+                        type: "simple-marker",
+                        color: "blue",
+                        style: "square",
+                        size: "10px"
+                    }
+                }, {
+                    value: "Middle",
+                    symbol: {
+                        type: "simple-marker",
+                        color: "red",
+                        style: "square",
+                        size: "10px"
+                    }
+                }, {
+                    value: "High",
+                    symbol: {
+                        type: "simple-marker",
+                        color: "green",
+                        style: "square",
+                        size: "10px"
+                    }
+                }]
+            };
+
+            var schools = new FeatureLayer ({
+                url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/9",
+                renderer: schoolsRenderer,
+                popupTemplate: schoolPopup,
+                id: "Schools"
+            });
+
+            var elemDistricts = new FeatureLayer({
+                url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/5",
+                popupTemplate: elemDstrctPopup,
+                id: "Elementary School Districts",
+                opacity: 0.5
+            });
+
+            var elemZones = new FeatureLayer ({
+                url: "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/2",
+                popupTemplate: elemZonesPopup,
+                id: "Elementary School Bus Zones",
+                opacity: 0.5
+            });
+
+            viewSchools.when(function() {
+                map.add(elemDistricts);
+                map.add(elemZones);
+                map.add(schools);
+                map.add(queryResults);
+
+                var legend = new Legend ({
+                    view: viewSchools,
+                    layerInfos: [{
+                        layer: schools,
+                        title: "Sioux Falls Schools"
+                    }]
+                });
+
+                viewSchools.ui.add(legend, "bottom-left");
+
+                var layerList = new LayerList({
+                    view: viewSchools
+                });
+
+                viewSchools.ui.add(layerList, "bottom-right");
+            });
+
+            function doQuery() {
+                var schoolsLayerUrl = "https://gis2.siouxfalls.org/arcgis/rest/services/Data/Education/MapServer/9";
+
+                var queryTask = new QueryTask({
+                    url: schoolsLayerUrl
+                });
+
+                var query = new Query({
+                    returnGeometry: true,
+                    outFields: ["*"]
+                });
+
+                var queriedSchool = dom.byId("schoolSelect");
+                schools.visible = (queriedSchool.value === "all");
+
+                if (queriedSchool.value !== "all") {
+                    query.where = "PRIVATE='" + queriedSchool.value + "'";
+                    queryTask.execute(query)
+                        .then(getResults)
+                        .otherwise(promiseRejected);
+                } else {
+                    queryResults.removeAll();
+                    dom.byId("printResults").innerHTML = "";
+                }
+            }
+
+            function getResults(response) {
+                console.info("results:" + response.features.length);
+
+                dom.byId("printResults").innerHTML = response.features.length + " result(s) found!";
+                displayResults(response);
+            }
+
+            function promiseRejected(err) {
+                console.error("Query failed: ", err.message);
+            }
+
+            function displayResults(response) {
+                queryResults.removeAll();
+
+                var schoolsResults = arrayUtils.map(response.features, function(feature) {
+                    feature.symbol = new SimpleMarkerSymbol({
+                        style: "circle",
+                        color: "red",
+                        size: "10px",
+                    });
+                    return feature;
+                });
+
+                queryResults.addMany(schoolsResults);
+                viewSchools.goTo(schoolsResults);
+            }
         });
-</script>
+
+    </script>
 </head>
 
 <body>
 <div id="viewDiv"></div>
+<div id="queryDiv">
+    <br>
+    View
+    <select id="schoolSelect">
+        <option value="all">All</option>
+        <option value="Yes">Private</option>
+        <option value="No">Public</option>
+    </select>
+    Schools
+    <br>
+    <br>
+    <button id="queryBtn">Filter</button>
+    <br>
+    <p><span id="printResults"></span></p>
+</div>
 </body>
 </html>
