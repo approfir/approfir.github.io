@@ -1,0 +1,22 @@
+{
+    "children": [
+        {
+            "name": "Availability",
+            "children": [
+                { "name": "Physical", "colname": "level3" },
+                { "name": "Temporal", "colname": "level3" },
+                { "name": "Socio-Economic", "colname": "level3" }
+            ],
+            "colname": "level2"
+        },
+        {
+            "name": "Accessibility",
+            "children": [
+                { "name": "Affordability", "colname": "level3" },
+                { "name": "Proximity", "colname": "level3" }
+            ],
+            "colname": "level2"
+        }
+    ],
+    "name": "Food Security"
+}
